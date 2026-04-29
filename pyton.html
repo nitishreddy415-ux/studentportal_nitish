@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Student Portal</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    display: flex;
+    height: 100vh;
+    background: radial-gradient(circle at top, #0f172a, #020617);
+    color: white;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    background: #020617;
+    padding: 20px;
+    border-right: 1px solid #1e293b;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 40px;
+}
+
+.logo-box {
+    background: #facc15;
+    color: black;
+    padding: 8px;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+.step {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #94a3b8;
+}
+
+.step.active {
+    color: #facc15;
+}
+
+.step-circle {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    border: 2px solid #334155;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+}
+
+.step.active .step-circle {
+    border-color: #facc15;
+}
+
+/* Main Content */
+.main {
+    flex: 1;
+    padding: 50px;
+}
+
+.progress-bar {
+    height: 4px;
+    background: #1e293b;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.progress {
+    width: 20%;
+    height: 100%;
+    background: linear-gradient(to right, #3b82f6, #facc15);
+}
+
+h1 {
+    font-size: 40px;
+}
+
+p {
+    color: #94a3b8;
+    margin-bottom: 30px;
+}
+
+/* Form */
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.input-group {
+    flex: 1;
+    margin-bottom: 20px;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 6px;
+    display: block;
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border-radius: 8px;
+    border: 1px solid #1e293b;
+    background: #0f172a;
+    color: white;
+}
+
+input:focus {
+    border-color: #3b82f6;
+    outline: none;
+}
+
+button {
+    background: #facc15;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #eab308;
+}
+</style>
+</head>
+
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <div class="logo">
+        <div class="logo-box">GCF</div>
+        <div>
+            <div>Student Portal</div>
+            <small>Registration System</small>
+        </div>
+    </div>
+
+    <div class="step active"><div class="step-circle">1</div> Personal Info</div>
+    <div class="step"><div class="step-circle">2</div> Academic Info</div>
+    <div class="step"><div class="step-circle">3</div> Create Password</div>
+    <div class="step"><div class="step-circle">4</div> Math Quiz</div>
+    <div class="step"><div class="step-circle">5</div> All Done!</div>
+</div>
+
+<!-- Main -->
+<div class="main">
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <h1>Personal Information</h1>
+    <p>Let's start with the basics. Fill in your name and contact details.</p>
+
+    <form id="form">
+        <div class="form-row">
+            <div class="input-group">
+                <label>First Name *</label>
+                <input type="text" id="firstName" required>
+            </div>
+            <div class="input-group">
+                <label>Last Name *</label>
+                <input type="text" id="lastName" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Email *</label>
+            <input type="email" id="email" required>
+        </div>
+
+        <div class="input-group">
+            <label>Age *</label>
+            <input type="number" id="age" required>
+        </div>
+
+        <button type="submit">Continue →</button>
+    </form>
+</div>
+
+<script>
+const form = document.getElementById("form");
+const progress = document.getElementById("progress");
+
+form.addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    let first = document.getElementById("firstName").value.trim();
+    let last = document.getElementById("lastName").value.trim();
+    let email = document.getElementById("email").value.trim();
+    let age = document.getElementById("age").value.trim();
+        // Store data and move to the next step
+        const studentData = { first, last, email, age };
+    localStorage.setItem("studentData", JSON.stringify(studentData));
+    showAcademicInfo();
+});
+
+const mainContent = document.querySelector(".main");
+const steps = document.querySelectorAll(".step");
+
+function updateSidebar(stepIndex) {
+    steps.forEach((step, i) => {
+        step.classList.toggle("active", i === stepIndex);
+    });
+    progress.style.width = `${(stepIndex + 1) * 20}%`;
+}
+
+// STEP 2: Academic Info
+function showAcademicInfo() {
+    updateSidebar(1);
+    mainContent.innerHTML = `
+        <div class="progress-bar"><div class="progress" style="width: 40%"></div></div>
+        <h1>Academic Info</h1>
+        <p>Tell us about your current studies.</p>
+        <form id="academicForm">
+            <div class="input-group"><label>School Name</label><input type="text" id="school" required></div>
+            <div class="input-group"><label>Current Grade</label><input type="text" id="grade" required></div>
+            <button type="submit">Continue →</button>
+        </form>
+    `;
+    document.getElementById("academicForm").onsubmit = (e) => {
+        e.preventDefault();
+        showPasswordStep();
+    };
+}
+
+// STEP 3: Password
+function showPasswordStep() {
+    updateSidebar(2);
+    mainContent.innerHTML = `
+        <div class="progress-bar"><div class="progress" style="width: 60%"></div></div>
+        <h1>Secure Your Account</h1>
+        <p>Choose a strong password for your portal.</p>
+        <form id="passForm">
+            <div class="input-group"><label>Password</label><input type="password" id="p1" required></div>
+            <div class="input-group"><label>Confirm Password</label><input type="password" id="p2" required></div>
+            <button type="submit">Continue →</button>
+        </form>
+    `;
+    document.getElementById("passForm").onsubmit = (e) => {
+        e.preventDefault();
+        if(document.getElementById("p1").value !== document.getElementById("p2").value) {
+            alert("Passwords do not match!");
+            return;
+        }
+        showMathQuiz();
+    };
+}
+
+// STEP 4: Math Quiz
+function showMathQuiz() {
+    updateSidebar(3);
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * 10) + 1;
+    const answer = num1 + num2;
+
+    mainContent.innerHTML = `
+        <div class="progress-bar"><div class="progress" style="width: 80%"></div></div>
+        <h1>Quick Verification</h1>
+        <p>Solve this simple math problem to prove you're human.</p>
+        <form id="quizForm">
+            <div class="input-group">
+                <label>What is ${num1} + ${num2}?</label>
+                <input type="number" id="quizAns" required>
+            </div>
+            <button type="submit">Submit Registration →</button>
+        </form>
+    `;
+    document.getElementById("quizForm").onsubmit = (e) => {
+        e.preventDefault();
+        if(parseInt(document.getElementById("quizAns").value) === answer) {
+            showSuccess();
+        } else {
+            alert("Incorrect answer. Try again!");
+            showMathQuiz();
+        }
+    };
+}
+
+// STEP 5: Success
+function showSuccess() {
+    updateSidebar(4);
+    const data = JSON.parse(localStorage.getItem("studentData"));
+    mainContent.innerHTML = `
+        <div class="progress-bar"><div class="progress" style="width: 100%"></div></div>
+        <h1 style="color: #facc15;">Registration Complete!</h1>
+        <p>Welcome to the portal, ${data.first}. Your account is being processed.</p>
+        <div style="background: #1e293b; padding: 20px; border-radius: 8px;">
+            <div style="margin-bottom: 10px;"><strong>Name:</strong> ${data.first} ${data.last}</div>
+            <div style="margin-bottom: 10px;"><strong>Email:</strong> ${data.email}</div>
+            <div><strong>Status:</strong> Pending Approval</div>
+        </div>
+        <button onclick="location.reload()" style="margin-top: 20px; background: white; color: black;">Start Over</button>
+    `;
+}
+</script>
+</body>
+</html>
